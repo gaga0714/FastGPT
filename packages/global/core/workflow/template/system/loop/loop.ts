@@ -17,6 +17,7 @@ import {
   Input_Template_Node_Height,
   Input_Template_Node_Width
 } from '../../input';
+import { batchLoopDefaultParallelLimit, getBatchLoopDefaultErrorConfig } from '../../../utils';
 
 export const LoopNode: FlowNodeTemplateType = {
   id: FlowNodeTypeEnum.loop,
@@ -40,6 +41,23 @@ export const LoopNode: FlowNodeTemplateType = {
       label: i18nT('workflow:loop_input_array'),
       value: []
     },
+    {
+      key: NodeInputKeyEnum.loopParallelLimit,
+      renderTypeList: [FlowNodeInputTypeEnum.numberInput, FlowNodeInputTypeEnum.reference],
+      valueType: WorkflowIOValueTypeEnum.number,
+      required: true,
+      label: i18nT('workflow:loop_parallel_limit'),
+      min: 1,
+      max: 50,
+      value: batchLoopDefaultParallelLimit
+    },
+    {
+      key: NodeInputKeyEnum.loopErrorConfig,
+      renderTypeList: [FlowNodeInputTypeEnum.hidden],
+      valueType: WorkflowIOValueTypeEnum.object,
+      label: '',
+      value: getBatchLoopDefaultErrorConfig()
+    },
     Input_Template_Children_Node_List,
     Input_Template_Node_Width,
     Input_Template_Node_Height,
@@ -52,6 +70,23 @@ export const LoopNode: FlowNodeTemplateType = {
       label: i18nT('workflow:loop_result'),
       type: FlowNodeOutputTypeEnum.static,
       valueType: WorkflowIOValueTypeEnum.arrayAny
+    },
+    {
+      id: NodeOutputKeyEnum.loopRunStatus,
+      key: NodeOutputKeyEnum.loopRunStatus,
+      label: i18nT('workflow:loop_run_status'),
+      description: i18nT('workflow:loop_run_status_desc'),
+      type: FlowNodeOutputTypeEnum.static,
+      valueType: WorkflowIOValueTypeEnum.string,
+      required: true
+    },
+    {
+      id: NodeOutputKeyEnum.loopErrorFeedback,
+      key: NodeOutputKeyEnum.loopErrorFeedback,
+      label: i18nT('workflow:loop_error_feedback'),
+      description: i18nT('workflow:loop_error_feedback_desc'),
+      type: FlowNodeOutputTypeEnum.static,
+      valueType: WorkflowIOValueTypeEnum.object
     }
   ]
 };

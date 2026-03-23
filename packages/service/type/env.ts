@@ -32,6 +32,10 @@ declare global {
       USE_IP_LIMIT?: string;
       WORKFLOW_MAX_RUN_TIMES?: string;
       WORKFLOW_MAX_LOOP_TIMES?: string;
+      WORKFLOW_MAX_LOOP_PARALLEL_LIMIT?: string;
+      WORKFLOW_MAX_LOOP_RETRY_TIMES?: string;
+      WORKFLOW_LOOP_ITEM_TIMEOUT?: string;
+      WORKFLOW_LOOP_NODE_TIMEOUT?: string;
       CHECK_INTERNAL_IP?: string;
       ALLOWED_ORIGINS?: string;
       SHOW_COUPON?: string;

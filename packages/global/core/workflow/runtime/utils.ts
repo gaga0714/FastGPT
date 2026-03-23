@@ -15,7 +15,7 @@ import { type WorkflowInteractiveResponseType } from '../template/system/interac
 import type { RuntimeEdgeItemType, StoreEdgeItemType } from '../type/edge';
 import type { FlowNodeOutputItemType, ReferenceValueType } from '../type/io';
 import type { StoreNodeItemType } from '../type/node';
-import { isValidReferenceValueFormat } from '../utils';
+import { isValidReferenceValueFormat, normalizeBatchLoopStoreNode } from '../utils';
 import type { RuntimeNodeItemType } from './type';
 import { isSecretValue } from '../../../common/secret/utils';
 import { isChildInteractive } from '../template/system/interactive/constants';
@@ -260,7 +260,9 @@ export const storeNodes2RuntimeNodes = (
   entryNodeIds: string[]
 ): RuntimeNodeItemType[] => {
   return (
-    nodes.map<RuntimeNodeItemType>((node) => {
+    nodes.map<RuntimeNodeItemType>((rawNode) => {
+      const node = normalizeBatchLoopStoreNode(rawNode);
+
       return {
         nodeId: node.nodeId,
         name: node.name,

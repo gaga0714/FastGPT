@@ -19,7 +19,8 @@ import { type EditorVariablePickerType } from '@fastgpt/web/components/common/Te
 import {
   formatEditorVariablePickerIcon,
   getAppChatConfig,
-  getHandleId
+  getHandleId,
+  normalizeBatchLoopStoreNode
 } from '@fastgpt/global/core/workflow/utils';
 import { type TFunction } from 'next-i18next';
 import {
@@ -96,6 +97,7 @@ export const storeNode2FlowNode = ({
   const dynamicInput = template.inputs.find(
     (input) => input.renderTypeList[0] === FlowNodeInputTypeEnum.addInputParam
   );
+  storeNode = normalizeBatchLoopStoreNode(storeNode);
 
   // replace item data
   const nodeItem: FlowNodeItemType = {
@@ -164,7 +166,7 @@ export const storeNode2FlowNode = ({
   // Format output invalid
   const llmList = useSystemStore.getState().llmModelList;
   const llmModelMap = llmList.reduce(
-    (acc, model) => {
+    (acc: Record<string, LLMModelItemType>, model: LLMModelItemType) => {
       acc[model.model] = model;
       return acc;
     },
@@ -440,7 +442,7 @@ export const checkWorkflowNodeAndConnection = ({
 
     if (data.flowNodeType === FlowNodeTypeEnum.ifElseNode) {
       const ifElseList: IfElseListItemType[] = inputs.find(
-        (input) => input.key === NodeInputKeyEnum.ifElseList
+        (input: FlowNodeInputItemType) => input.key === NodeInputKeyEnum.ifElseList
       )?.value;
       if (
         ifElseList.some((item) => {
@@ -462,7 +464,7 @@ export const checkWorkflowNodeAndConnection = ({
     }
     if (data.flowNodeType === FlowNodeTypeEnum.userSelect) {
       const configValue = data.inputs.find(
-        (input) => input.key === NodeInputKeyEnum.userSelectOptions
+        (input: FlowNodeInputItemType) => input.key === NodeInputKeyEnum.userSelectOptions
       )?.value;
       if (
         !configValue ||
@@ -474,7 +476,7 @@ export const checkWorkflowNodeAndConnection = ({
     }
     if (data.flowNodeType === FlowNodeTypeEnum.formInput) {
       const value = data.inputs.find(
-        (input) => input.key === NodeInputKeyEnum.userInputForms
+        (input: FlowNodeInputItemType) => input.key === NodeInputKeyEnum.userInputForms
       )?.value;
       if (!value || value.length === 0) {
         return [data.nodeId];
@@ -486,7 +488,7 @@ export const checkWorkflowNodeAndConnection = ({
           edge.source === data.nodeId && edge.sourceHandle === NodeOutputKeyEnum.selectedTools
       );
       const useAgentSandbox = inputs.find(
-        (input) => input.key === NodeInputKeyEnum.useAgentSandbox
+        (input: FlowNodeInputItemType) => input.key === NodeInputKeyEnum.useAgentSandbox
       )?.value;
       if (toolConnections.length === 0 && !useAgentSandbox) {
         return [data.nodeId];
@@ -495,7 +497,7 @@ export const checkWorkflowNodeAndConnection = ({
 
     // check node input
     if (
-      inputs.some((input) => {
+      inputs.some((input: FlowNodeInputItemType) => {
         if (
           !input.valueType ||
           [WorkflowIOValueTypeEnum.any, WorkflowIOValueTypeEnum.boolean].includes(input.valueType)
@@ -529,7 +531,7 @@ export const checkWorkflowNodeAndConnection = ({
 
             return !!nodes
               .find((node) => node.data.nodeId === nodeId)
-              ?.data.outputs.find((output) => output.id === outputId);
+              ?.data.outputs.find((output: FlowNodeOutputItemType) => output.id === outputId);
           };
 
           if (input.valueType?.startsWith('array')) {

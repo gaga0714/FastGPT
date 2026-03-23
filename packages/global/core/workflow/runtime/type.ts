@@ -393,6 +393,10 @@ export type DispatchNodeResponseType = {
   loopResult?: any[];
   loopInput?: any[];
   loopDetail?: ChatHistoryItemResType[];
+  loopRunStatus?: string;
+  loopErrorFeedback?: Record<string, string>;
+  loopParallelLimit?: number;
+  loopRetryTimes?: number;
   // loop start
   loopInputValue?: any;
   // loop end

@@ -113,6 +113,37 @@ describe('storeNode2FlowNode', () => {
     expect(result.data.outputs).toHaveLength(2);
   });
 
+  it('should normalize legacy loop node config for editor', () => {
+    const storeNode: StoreNodeItemType = {
+      nodeId: 'loop1',
+      flowNodeType: FlowNodeTypeEnum.loop,
+      position: { x: 0, y: 0 },
+      inputs: [
+        {
+          key: NodeInputKeyEnum.loopInputArray,
+          label: '数组',
+          renderTypeList: [FlowNodeInputTypeEnum.reference],
+          value: []
+        }
+      ],
+      outputs: [],
+      name: 'Loop Node',
+      version: '1.0'
+    };
+
+    const result = storeNode2FlowNode({
+      item: storeNode,
+      t: ((key: any) => key) as any
+    });
+
+    expect(
+      result.data.inputs.find((input) => input.key === NodeInputKeyEnum.loopParallelLimit)?.value
+    ).toBe(1);
+    expect(
+      result.data.inputs.find((input) => input.key === NodeInputKeyEnum.loopErrorConfig)?.value
+    ).toEqual({ retryTimes: 3 });
+  });
+
   // 这两个测试涉及到模拟冲突，请运行单独的测试文件:
   // - utils.deprecated.test.ts: 测试 deprecated inputs/outputs
   // - utils.version.test.ts: 测试 version 和 avatar inheritance

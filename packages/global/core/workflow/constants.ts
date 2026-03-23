@@ -239,6 +239,8 @@ export enum NodeInputKeyEnum {
 
   // loop
   loopInputArray = 'loopInputArray',
+  loopParallelLimit = 'loopParallelLimit',
+  loopErrorConfig = 'loopErrorConfig',
   childrenNodeIdList = 'childrenNodeIdList',
   nodeWidth = 'nodeWidth',
   nodeHeight = 'nodeHeight',
@@ -307,6 +309,8 @@ export enum NodeOutputKeyEnum {
 
   // loop
   loopArray = 'loopArray',
+  loopRunStatus = 'loopRunStatus',
+  loopErrorFeedback = 'loopErrorFeedback',
   // loop start
   loopStartInput = 'loopStartInput',
   loopStartIndex = 'loopStartIndex',

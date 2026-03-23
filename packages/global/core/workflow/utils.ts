@@ -51,6 +51,93 @@ import { getNanoid } from '../../common/string/tools';
 import { ChatRoleEnum } from '../../core/chat/constants';
 import { runtimePrompt2ChatsValue } from '../../core/chat/adapt';
 
+export const batchLoopDefaultParallelLimit = 10;
+export const batchLoopLegacyParallelLimit = 1;
+export const batchLoopMaxParallelLimit = 50;
+export const batchLoopDefaultRetryTimes = 3;
+export const batchLoopMaxRetryTimes = 5;
+
+export const getBatchLoopDefaultErrorConfig = () => ({
+  retryTimes: batchLoopDefaultRetryTimes
+});
+
+export const normalizeBatchLoopErrorConfig = (value: any) => {
+  const retryTimes =
+    typeof value?.retryTimes === 'number' && Number.isFinite(value.retryTimes)
+      ? value.retryTimes
+      : batchLoopDefaultRetryTimes;
+
+  return {
+    retryTimes
+  };
+};
+
+export const normalizeBatchLoopStoreNode = (node: StoreNodeItemType): StoreNodeItemType => {
+  if (node.flowNodeType !== FlowNodeTypeEnum.loop) {
+    return node;
+  }
+
+  const hasParallelLimit = node.inputs.some(
+    (input) => input.key === NodeInputKeyEnum.loopParallelLimit
+  );
+  const hasErrorConfig = node.inputs.some(
+    (input) => input.key === NodeInputKeyEnum.loopErrorConfig
+  );
+
+  const normalizedInputs = node.inputs.map((input) => {
+    // Legacy placeholder: old loop node used `description: '1'` to trigger tooltip icon.
+    // New UI removes those icons, so we must clear persisted placeholder descriptions.
+    if ((input as any).description === '1' || (input as any).description === 1) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete (input as any).description;
+    }
+
+    if (input.key === NodeInputKeyEnum.loopErrorConfig) {
+      return {
+        ...input,
+        value: normalizeBatchLoopErrorConfig(input.value)
+      };
+    }
+
+    return input;
+  });
+
+  const normalizedOutputs = node.outputs?.map((output) => {
+    if ((output as any).description === '1' || (output as any).description === 1) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete (output as any).description;
+    }
+
+    return output;
+  });
+
+  if (!hasParallelLimit) {
+    normalizedInputs.push({
+      key: NodeInputKeyEnum.loopParallelLimit,
+      label: '',
+      renderTypeList: [FlowNodeInputTypeEnum.hidden],
+      valueType: WorkflowIOValueTypeEnum.number,
+      value: batchLoopLegacyParallelLimit
+    });
+  }
+
+  if (!hasErrorConfig) {
+    normalizedInputs.push({
+      key: NodeInputKeyEnum.loopErrorConfig,
+      label: '',
+      renderTypeList: [FlowNodeInputTypeEnum.hidden],
+      valueType: WorkflowIOValueTypeEnum.object,
+      value: getBatchLoopDefaultErrorConfig()
+    });
+  }
+
+  return {
+    ...node,
+    inputs: normalizedInputs,
+    outputs: normalizedOutputs
+  };
+};
+
 export const getHandleId = (
   nodeId: string,
   type: 'source' | 'source_catch' | 'target',

@@ -1125,6 +1125,37 @@ describe('storeNodes2RuntimeNodes', () => {
     const result = storeNodes2RuntimeNodes(nodes, ['other']);
     expect(result[0].isEntry).toBe(false);
   });
+
+  it('should normalize legacy loop node inputs', () => {
+    const nodes: StoreNodeItemType[] = [
+      {
+        nodeId: 'loop1',
+        name: 'Loop',
+        flowNodeType: FlowNodeTypeEnum.loop,
+        inputs: [
+          {
+            key: NodeInputKeyEnum.loopInputArray,
+            label: '',
+            renderTypeList: [],
+            value: []
+          }
+        ],
+        outputs: [],
+        position: { x: 0, y: 0 }
+      }
+    ];
+
+    const result = storeNodes2RuntimeNodes(nodes, []);
+    const parallelInput = result[0].inputs.find(
+      (input) => input.key === NodeInputKeyEnum.loopParallelLimit
+    );
+    const errorConfigInput = result[0].inputs.find(
+      (input) => input.key === NodeInputKeyEnum.loopErrorConfig
+    );
+
+    expect(parallelInput?.value).toBe(1);
+    expect(errorConfigInput?.value).toEqual({ retryTimes: 3 });
+  });
 });
 
 describe('filterWorkflowEdges', () => {

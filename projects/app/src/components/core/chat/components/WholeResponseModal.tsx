@@ -496,6 +496,8 @@ export const WholeResponseContent = ({
       {/* loop */}
       <Row label={t('common:core.chat.response.loop_input')} value={activeModule?.loopInput} />
       <Row label={t('common:core.chat.response.loop_output')} value={activeModule?.loopResult} />
+      <Row label={t('workflow:loop_run_status')} value={activeModule?.loopRunStatus} />
+      <Row label={t('workflow:loop_error_feedback')} value={activeModule?.loopErrorFeedback} />
 
       {/* loopStart */}
       <Row
