@@ -46,7 +46,11 @@ export const env = createEnv({
     TRACING_OTEL_SAMPLE_RATIO: z.coerce.number().min(0).max(1).optional(),
 
     APP_FOLDER_MAX_AMOUNT: z.coerce.number().int().positive().default(1000),
-    DATASET_FOLDER_MAX_AMOUNT: z.coerce.number().int().positive().default(1000)
+    DATASET_FOLDER_MAX_AMOUNT: z.coerce.number().int().positive().default(1000),
+    WORKFLOW_MAX_LOOP_TIMES: z.coerce.number().int().positive().default(100),
+    WORKFLOW_BATCH_MAX_CONCURRENCY: z.coerce.number().int().positive().default(10),
+    WORKFLOW_BATCH_MAX_RETRY: z.coerce.number().int().min(0).default(5),
+    WORKFLOW_BATCH_MIN_CONCURRENCY: z.coerce.number().int().positive().default(3)
   },
   emptyStringAsUndefined: true,
   runtimeEnv: process.env,
@@ -55,3 +59,9 @@ export const env = createEnv({
     throw new Error(`Invalid environment variables. Please check: ${paths}\n`);
   }
 });
+
+if (env.WORKFLOW_BATCH_MIN_CONCURRENCY > env.WORKFLOW_MAX_LOOP_TIMES) {
+  throw new Error(
+    'Invalid environment: WORKFLOW_BATCH_MAX_CONCURRENCY must be <= WORKFLOW_MAX_LOOP_TIMES'
+  );
+}

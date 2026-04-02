@@ -39,7 +39,7 @@ export const dispatchLoop = async (props: Props): Promise<Response> => {
   // Max loop times
   const maxLength = process.env.WORKFLOW_MAX_LOOP_TIMES
     ? Number(process.env.WORKFLOW_MAX_LOOP_TIMES)
-    : 50;
+    : 100;
   if (loopInputArray.length > maxLength) {
     return Promise.reject(`Input array length cannot be greater than ${maxLength}`);
   }

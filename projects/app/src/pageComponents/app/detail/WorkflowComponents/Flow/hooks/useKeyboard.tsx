@@ -68,7 +68,11 @@ export const useKeyboard = () => {
       if (!Array.isArray(parseData)) return;
       // filter workflow data
       const filteredData = parseData.filter(
-        (item) => !!item.type && item.data?.unique !== true && item.type !== FlowNodeTypeEnum.loop
+        (item) =>
+          !!item.type &&
+          item.data?.unique !== true &&
+          item.type !== FlowNodeTypeEnum.loop &&
+          item.type !== FlowNodeTypeEnum.batch
       );
 
       if (filteredData.length === 0) return;

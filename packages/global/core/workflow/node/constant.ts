@@ -148,6 +148,7 @@ export enum FlowNodeTypeEnum {
   readFiles = 'readFiles',
   userSelect = 'userSelect',
   loop = 'loop',
+  batch = 'batch',
   loopStart = 'loopStart',
   loopEnd = 'loopEnd',
   formInput = 'formInput',
@@ -159,6 +160,10 @@ export enum FlowNodeTypeEnum {
   pluginModule = 'pluginModule',
   runApp = 'app'
 }
+
+export const isWorkflowParentContainerNodeType = (
+  type: FlowNodeTypeEnum | string | undefined | null
+): boolean => type === FlowNodeTypeEnum.loop || type === FlowNodeTypeEnum.batch;
 
 // node IO value type
 export const FlowValueTypeMap: Record<
@@ -336,3 +341,12 @@ export const NodeColorSchemaEnum = [
   'salmon',
   'gray'
 ] as const;
+
+const parentChildContainerFlowNodeTypes = new Set<FlowNodeTypeEnum>([
+  FlowNodeTypeEnum.loop,
+  FlowNodeTypeEnum.batch
+]);
+
+export function isParentChildContainerFlowNodeType(flowNodeType: FlowNodeTypeEnum): boolean {
+  return parentChildContainerFlowNodeTypes.has(flowNodeType);
+}

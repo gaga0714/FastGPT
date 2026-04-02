@@ -237,6 +237,9 @@ export enum NodeInputKeyEnum {
   // user select
   userSelectOptions = 'userSelectOptions',
 
+  //batch
+  batchParallelConcurrency = 'batchParallelConcurrency',
+  batchParallelRetryTimes = 'batchParallelRetryTimes',
   // loop
   loopInputArray = 'loopInputArray',
   childrenNodeIdList = 'childrenNodeIdList',
@@ -305,6 +308,9 @@ export enum NodeOutputKeyEnum {
   //user select
   selectResult = 'selectResult',
 
+  //batch
+  batchRawResult = 'batchRawResult',
+  batchStatus = 'batchStatus',
   // loop
   loopArray = 'loopArray',
   // loop start
